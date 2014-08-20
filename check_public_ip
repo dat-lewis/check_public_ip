@@ -1,0 +1,29 @@
+#!/bin/bash
+# check_public_ip script v1.0 (13.06.2014)
+# author: alfred sibla [alf@debian-blog.org]
+# debian-blog.org
+
+# edit this sections so it fits your needs
+SNTTO="mail@domain.com"
+SBJCT="IP changed on host foo.domain.com"
+PIP="/tmp/PIP"
+FRM="root@domain.com"
+
+# do not change
+CRNTIP=`wget -qO- http://ifconfig.me/ip`
+
+        if ! [ -w $PIP ]
+                then wget -qO- http://ifconfig.me/ip > $PIP
+        fi
+
+LSTIP=`cat $PIP`
+
+        if [ -z $LSTIP ]
+                then LSTIP=1
+        fi
+
+        if ! [ $CRNTIP = $LSTIP ]
+                then
+                  echo $CRNTIP > $PIP &&  mail -s "$SBJCT" $SNTTO -- -F $FRM < $PIP
+        fi
+exit 0
